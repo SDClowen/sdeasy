@@ -1,0 +1,27 @@
+{
+  "name": "sdeasy",
+  "version": "1.0.0",
+  "description": "A powerful library for easier processing in your javascript applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SDClowen/sdeasy.git"
+  },
+  "keywords": [
+    "sdeasy",
+    "sdphp",
+    "javascript",
+    "sdclowen",
+    "sdphp",
+    "mahmutyildirim"
+  ],
+  "author": "Mahmut YILDIRIM a.k.a SDClowen",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/SDClowen/sdeasy/issues"
+  },
+  "homepage": "https://github.com/SDClowen/sdeasy#readme"
+}
