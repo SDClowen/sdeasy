@@ -32,7 +32,7 @@ $(function () {
             z-index: 1;
         }
     `)
-    
+
     document.head.appendChild(style)
 
     /**
@@ -42,22 +42,22 @@ $(function () {
         if (location.pathname) {
 
             const pathElement = document.querySelector("ul a[href='" + location.pathname + "']")
-            
-            const pathElements = document.querySelectorAll("ul li")
+
+            const pathElements = document.querySelectorAll("ul li a.active")
             pathElements.forEach(element => {
                 element.classList.remove("active");
                 element.removeAttribute("onclick");
             })
-            
-            if(pathElement)
-            {
+
+            if (pathElement) {
                 pathElement.classList.add("active")
                 pathElement.attributes["href"] = "#";
 
-                if(pathElement.hasAttribute("onclick"))
+                if (pathElement.hasAttribute("onclick"))
                     pathElement.removeAttribute("onclick");
 
-                pathElement.setAttribute("onclick", "return false")
+                if (!pathElement.hasAttribute("live"))
+                    pathElement.setAttribute("onclick", "return false")
             }
         }
     }
@@ -311,15 +311,14 @@ $(function () {
         });
     }
 
-    $.fn.sdajax = function(spinnerObj, onAjaxDone, xhrUrl, xhrData = false, xhrType = "get", xhrDataType = "json"){
-        spinnerObj.spinner();
-        
+    $.fn.sdajax = function (spinnerObj, onAjaxDone, xhrUrl, xhrData = false, xhrType = "get", xhrDataType = "json") {
+
+        if (spinnerObj)
+            spinnerObj.spinner();
+
         const $this = $(this)
 
         const content = $($this.data("content"));
-        let contentType = $this.data("content-type");
-        if (!contentType)
-            contentType = "alert";
 
         const remove = $this.data("remove");
         let redirect = $this.attr("redirect");
@@ -356,12 +355,12 @@ $(function () {
                 else
                     $(data.message).appendTo(insertTo).fadeIn("slow");
             }
-            else if (content.length && contentType == "html" && xhrDataType == "html") {
+            else if (content.length && xhrDataType == "html") {
                 content.scroll();
                 content.html(data);
             }
             else if (content.length && data.message) {
-                if (contentType == "html")
+                if (xhrDataType == "html")
                     content.html(data.message);
                 else {
                     content.message(data);
@@ -472,12 +471,12 @@ $(function () {
         };
 
         $.ajax(settings)
-            .always(function () { spinnerObj.spinner(); })
+            .always(function () { if (spinnerObj) spinnerObj.spinner(); })
             .fail(function () { error() });
     }
 
     /**
-     * Operates according to the conditions specified on all elements with the {data-url} tag. lazy:run(); :=)
+     * Operates according to the conditions specified on all elements with the {lazy-load} tag. lazy:run(); :=)
      */
     $("[lazy-load]").each(function () {
 
@@ -497,7 +496,12 @@ $(function () {
     /**
      * Operates according to the conditions specified on all elements with the {data-url} tag. lazy:run(); :=)
      */
-    $("body").on("click", "[data-url]", function () {
+    $("body").on("click", "[href]", function () {
+        if (window.location.pathname == $(this).attr("href"))
+            return false;
+    })
+
+    $("body").on("click", "[data-url], [live='true']", function () {
 
         const $this = $(this);
         let actionType = $this.data("action-type");
@@ -508,7 +512,19 @@ $(function () {
         if (!actionDataType)
             actionDataType = "json";
 
-        let url = $this.data("url");
+
+        let spinner = $this.attr("spinner");
+        if (typeof (spinner) !== "undefined") {
+            if (spinner === "false")
+                spinner = null;
+            else
+                spinner = $(spinner);
+        }
+        else
+            spinner = $this;
+
+        const live = $this.attr("live");
+        let url = live ? $this.attr("href") : $this.data("url");
         let countable = $this.data("countable");
 
         const hasCountable = typeof (countable) !== "undefined";
@@ -518,16 +534,19 @@ $(function () {
             url = url + "/" + num;
         }
 
-        $this.sdajax($this, function (data) {
+        $this.sdajax(spinner, function (data) {
             if (hasCountable)
                 $this.data("countable", num);
 
-            const pushState = $this.data("push")
-            if (pushState) {
+            if (live) {
+                document.title = data.title;
                 window.history.pushState(null, null, url)
                 applyPathName()
 
+
                 const dataContent = $this.data("content");
+                $(dataContent).html(data.content);
+
                 $(`${dataContent} [datatable=true]`).each(function () {
 
                     const current = $(this);
@@ -544,7 +563,7 @@ $(function () {
     /**
      * Operates with ajax on all form elements lazy:run();
      */
-    $('[role="form"]').on('submit', function (event) {
+    $(document).on('submit', '[role="form"]', function (event) {
         if (!event.isDefaultPrevented()) {
             event.preventDefault();
 
@@ -664,11 +683,11 @@ $(function () {
             }
 
             var trigger = target.data("trigger");
-            if(trigger)
+            if (trigger)
                 $(trigger).trigger(target.data("trigger-type"));
 
             var dataRun = target.data("run");
-            if(dataRun)
+            if (dataRun)
                 eval(dataRun)
 
             if (title)
@@ -715,7 +734,7 @@ $(function () {
                 let jsonObj = target.data("json");
 
                 const fn = function () {
-                    
+
                     if (jsonObj) {
                         for (const [name, value] of Object.entries(jsonObj)) {
                             let item = $('[name="' + name + '"]', form);
@@ -727,8 +746,7 @@ $(function () {
                                 if (selectNames && selectNames.includes(name)) {
                                     const selectData = target.attr("data-select-" + name);
                                     const selectDataTest = target.data("select-" + name);
-                                    if(selectData)
-                                    {
+                                    if (selectData) {
                                         item.html("");
 
                                         for (const [sKey, sVal] of Object.entries(JSON.parse(selectData))) {
