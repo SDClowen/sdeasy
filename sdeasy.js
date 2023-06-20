@@ -303,6 +303,17 @@ $(function () {
         return datetimeInputString;
     };
 
+    const currentDate = () => {
+        var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
+        var localISOString = new Date(Date.now() - tzoffset)
+            .toISOString()
+            .slice(0, 10);
+
+        console.log(localISOString)
+        return localISOString;
+    };
+
+
     function updateTableIndexes(table) {
         let index = 0;
         let array = $(table + " tr th[scope=row]").toArray();
@@ -975,4 +986,5 @@ $(function () {
     });
 
     $("[current-datetime]").val(currentDateTime());
+    $("[current-date]").val(currentDate());
 });
