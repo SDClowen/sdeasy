@@ -120,7 +120,7 @@ $(function () {
         }, 500, 'linear');
     }
 
-    $.fn.initDataTable = function () {
+    $.fn.initDataTable = function (dtData = null, outResult = null) {
 
         const current = $(this);
 
@@ -194,6 +194,7 @@ $(function () {
                 method: "post",
                 url: current.attr("datatable-ajax"),
                 dataType: "json",
+                data: dtData,
                 async: true,
                 beforeSend: function () {
                     // Here, manually add the loading message.
