@@ -101,7 +101,7 @@ $(function () {
         if (!obj.message)
             return;
 
-        var msg = $(`<div class='alert alert-${obj.type} alert-dismissible' style="display: none" role="alert">${obj.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+        var msg = $(`<div class='alert ${obj.type} alert-${obj.type} alert-dismissible' style="display: none" role="alert">${obj.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
         this.append(msg);
 
         let readingTimeRemaining = (msg.text().length * 60 / 24) * 0.13 * 100 + 2000;
