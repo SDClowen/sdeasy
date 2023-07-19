@@ -583,11 +583,17 @@ $(function () {
             const method = event.currentTarget.method;
             const action = event.currentTarget.action;
 
+            const beforeFunc = $this.attr("before")
+            if(beforeFunc)
+                eval(beforeFunc);
+
             let button = null;
             if (event.hasOwnProperty("originalEvent"))
                 button = $(event.originalEvent.submitter);
             else
                 button = event.handleObj.handler.arguments[1].submitter;
+
+            const afterFunc = $this.attr("after")
 
             $this.sdajax(button, function (data) {
                 if (data.type == "success") {
@@ -595,6 +601,10 @@ $(function () {
 
                     // todo reset tom-select
                 }
+
+                if(afterFunc)
+                    eval(afterFunc);
+
             }, action, new FormData(this)/*$(this).serialize()*/, method);
 
             return false;
