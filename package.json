@@ -1,6 +1,6 @@
 {
   "name": "sdeasy",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A powerful library for easier processing in your javascript applications",
   "main": "index.js",
   "scripts": {
