@@ -148,7 +148,7 @@ $(function () {
             info: info,
             paging: paginate,
             language: {
-                url: `/app/public/json/${lang.toLowerCase()}.json`,
+                url: `/public/json/${lang.toLowerCase()}.json`,
             },
         };
 
