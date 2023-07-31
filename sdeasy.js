@@ -1,5 +1,17 @@
 $(function () {
 
+    const lang = $("html").attr("lang");
+    var i18nDTJson = [];
+
+    $.ajax({
+        url: `/public/json/${lang.toLowerCase()}.json`,
+        dataType: "json",
+        async: false,
+        success: (data) => {
+            i18nDTJson = data;
+        }
+    })
+
     var style = document.createElement("style");
     style.append(`
         @keyframes spinner {
@@ -137,8 +149,6 @@ $(function () {
         if (current.attr("dt-paginate"))
             paginate = current.attr("dt-paginate") == "true";
 
-        const lang = $("html").attr("lang");
-
         let config = {
             //serverSide: true,
             responsive: true,
@@ -147,9 +157,7 @@ $(function () {
             processing: false,
             info: info,
             paging: paginate,
-            language: {
-                url: `/public/json/${lang.toLowerCase()}.json`,
-            },
+            language: i18nDTJson,
         };
 
         if (current.attr("datatable-enable-exports")) {
@@ -575,7 +583,7 @@ $(function () {
     /**
      * Operates with ajax on all form elements lazy:run();
      */
-    $(document).on('submit', '[role="form"]', function (event) {
+    $("body").on('submit', '[role="form"]', function (event) {
         if (!event.isDefaultPrevented()) {
             event.preventDefault();
 
@@ -886,7 +894,7 @@ $(function () {
         form.find("textarea").val("");
     })
 
-    $("[submit]").on("click", function (event) {
+    $("body").on("click", "[submit]", "click", function (event) {
         let data = $($(this).attr("submit"));
         data.trigger('submit', { submitter: $(this) });
     });
