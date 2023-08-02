@@ -573,6 +573,13 @@ $(function () {
 
                     current.initDataTable();
                 })
+
+                $(`${dataContent} [select2=true]`).each(function () {
+
+                    const current = $(this);
+
+                    current.initSelect2();
+                })
             }
 
         }, url, false, actionType, actionDataType);
@@ -685,7 +692,7 @@ $(function () {
     /**
      * Auto fill the form inputs in the modal from the json
      */
-    $(".modal").on("show.bs.modal", (event) => {
+    $(document).on("show.bs.modal", ".modal", (event) => {
 
         let target = $(event.relatedTarget);
         const modal = $(event.currentTarget);
@@ -888,7 +895,7 @@ $(function () {
         }
     })
 
-    $(".modal").on("hidden.bs.modal", (event) => {
+    $(document).on("hidden.bs.modal", ".modal", (event) => {
         const form = $(event.currentTarget).find("form");
         form.resetForm();
         form.find("textarea").val("");
@@ -940,7 +947,7 @@ $(function () {
         dom.html(value.substring(1, value.length));
     });
 
-    $("[data-fill]").change(function () {
+    $(document).on("change", "[data-fill]", function () {
 
         const $this = $(this);
         let actionType = $this.data("action-type");
