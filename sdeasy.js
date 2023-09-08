@@ -500,13 +500,13 @@ $(function () {
                     document.title = data.title;
                     window.history.pushState(null, null, url);
                     applyPathName();
-                    const dataContent = $this.data("content");
-                    $(dataContent).html(data.content);
-                    $(`${dataContent} [datatable=true]`).each(function () {
+                    const contentData = $this.data("content");
+                    $(contentData).html(data.content);
+                    $(`${contentData} [datatable=true]`).each(function () {
                         const current = $(this);
                         current.initDataTable();
                     });
-                    $(`${dataContent} [select2=true]`).each(function () {
+                    $(`${contentData} [select2=true]`).each(function () {
                         const current = $(this);
                         current.initSelect2();
                     });
