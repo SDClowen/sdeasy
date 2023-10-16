@@ -113,6 +113,9 @@ $(function () {
         if (!obj.message)
             return;
 
+        if (!obj.visible)
+            return;
+
         var msg = $(`<div class='alert ${obj.type} alert-${obj.type} alert-dismissible' style="display: none" role="alert">${obj.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
         this.append(msg);
 
@@ -784,8 +787,8 @@ $(function () {
                         if (item.is("select")) {
                             const selectNames = target.data("select-name");
                             if (selectNames && selectNames.includes(name)) {
-                                const selectData = target.data("select");
-                                
+                                const selectData = target.attr("data-select-" + name);
+                                const selectDataTest = target.data("select-" + name);
                                 if (selectData) {
                                     item.html("");
 
