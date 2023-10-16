@@ -784,8 +784,8 @@ $(function () {
                         if (item.is("select")) {
                             const selectNames = target.data("select-name");
                             if (selectNames && selectNames.includes(name)) {
-                                const selectData = target.attr("data-select-" + name);
-                                const selectDataTest = target.data("select-" + name);
+                                const selectData = target.data("select");
+                                
                                 if (selectData) {
                                     item.html("");
 
