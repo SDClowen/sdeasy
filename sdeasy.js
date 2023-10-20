@@ -437,10 +437,8 @@ $(function () {
                 }
 
                 // TODO: Extend this code block to app.js
-                if (data.message.terminal)
-                {
-                    if(data.message.terminal.startsWith("<link"))
-                    {
+                if (data.message.terminal) {
+                    if (data.message.terminal.startsWith("<link")) {
                         if (spinnerObj) spinnerObj.spinner();
                         var printContents = data.message.terminal;
                         var originalContents = document.body.innerHTML;
@@ -717,12 +715,22 @@ $(function () {
         const private = modal.data("private");
         if (private) {
             if (!event.relatedTarget)
-                target = $(document.createElement('tempdata'));
+                target = $(document.createElement('span'));
 
             target.data("json", private.message.data)
             target.data("select-name", private.message.selectName)
             target.data("select", private.message.selectData)
             target.data("action", private.message.action)
+            
+            const splited = private.message.selectName.split(',');
+            splited.forEach(p => {
+                const splitedJson = private.message.selectData[p]
+                target.attr(`data-select-${p.trim()}`, JSON.stringify(splitedJson))
+
+                console.log(splitedJson)
+            });
+
+            modal.removeData("private");
         }
 
         var trigger = target.data("trigger");
@@ -787,12 +795,12 @@ $(function () {
                         if (item.is("select")) {
                             const selectNames = target.data("select-name");
                             if (selectNames && selectNames.includes(name)) {
-                                const selectData = target.attr("data-select-" + name);
-                                const selectDataTest = target.data("select-" + name);
+                                const selectData = JSON.parse(target.attr(`data-select-${name}`))
+                                
                                 if (selectData) {
                                     item.html("");
 
-                                    for (const [sKey, sVal] of Object.entries(JSON.parse(selectData))) {
+                                    for (const [sKey, sVal] of Object.entries(selectData)) {
 
                                         const v = Object.values(sVal);
                                         item.append(`<option value="${v[0]}">${v[1]}</option>`);
