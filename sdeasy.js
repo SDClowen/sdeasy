@@ -578,6 +578,9 @@ $(function () {
 
 
                 const dataContent = $this.data("content");
+                if(!dataContent)
+                    dataContent = $("#content");
+
                 $(dataContent).html(data.content);
 
                 $(`${dataContent} [datatable=true]`).each(function () {
