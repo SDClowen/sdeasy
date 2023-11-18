@@ -579,7 +579,7 @@ $(function () {
 
                 var dataContent = $this.data("content");
                 if(!dataContent)
-                    dataContent = $("#content");
+                    dataContent = "#content";
 
                 $(dataContent).html(data.content);
 
