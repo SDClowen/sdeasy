@@ -577,7 +577,7 @@ $(function () {
                 applyPathName()
 
 
-                const dataContent = $this.data("content");
+                var dataContent = $this.data("content");
                 if(!dataContent)
                     dataContent = $("#content");
 
