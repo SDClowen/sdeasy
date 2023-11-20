@@ -439,12 +439,12 @@ $(function () {
                 // TODO: Extend this code block to app.js
                 if (data.message.terminal) {
                     if (data.message.terminal.startsWith("<link")) {
-                        if (spinnerObj) spinnerObj.spinner();
-                        var printContents = data.message.terminal;
-                        var originalContents = document.body.innerHTML;
-                        document.body.innerHTML = printContents;
-                        window.print();
-                        document.body.innerHTML = originalContents;
+                        //if (spinnerObj) spinnerObj.spinner();
+
+                        const openedWindow = window.open();
+                        openedWindow.document.body.innerHTML = data.message.terminal;
+                        openedWindow.onafterprint = openedWindow.close;
+                        openedWindow.print();
                     }
                     else
                         window.location.href = data.message.terminal;
