@@ -438,7 +438,7 @@ $(function () {
 
                 // TODO: Extend this code block to app.js
                 if (data.message.terminal) {
-                    if (data.message.terminal.startsWith("<link")) {
+                    if (data.message.terminal.startsWith("<!--CUSTOM-->")) {
                         //if (spinnerObj) spinnerObj.spinner();
 
                         const openedWindow = window.open();
