@@ -116,12 +116,12 @@ $(function () {
         if (!obj.visible)
             return;
 
-        var msg = $(`<div class='alert tw-${obj.type} alert-${obj.type} alert-dismissible' style="display: none" role="alert">${obj.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+        var msg = $(`<div class='alert alert-${obj.type} alert-dismissible' style="display: none" role="alert">${obj.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
         this.append(msg);
 
         let readingTimeRemaining = (msg.text().length * 60 / 24) * 0.13 * 100 + 2000;
 
-        msg.slideDown().delay(readingTimeRemaining)//.slideUp("slow", function () { $(this).remove(); });
+        msg.slideDown().delay(readingTimeRemaining).slideUp("slow", function () { $(this).remove(); });
     }
 
     /**
