@@ -116,12 +116,12 @@ $(function () {
         if (!obj.visible)
             return;
 
-        var msg = $(`<div class='alert ${obj.type} alert-${obj.type} alert-dismissible' style="display: none" role="alert">${obj.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+        var msg = $(`<div class='alert tw-${obj.type} alert-${obj.type} alert-dismissible' style="display: none" role="alert">${obj.message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
         this.append(msg);
 
         let readingTimeRemaining = (msg.text().length * 60 / 24) * 0.13 * 100 + 2000;
 
-        msg.slideDown().delay(readingTimeRemaining).slideUp("slow", function () { $(this).remove(); });
+        msg.slideDown().delay(readingTimeRemaining)//.slideUp("slow", function () { $(this).remove(); });
     }
 
     /**
@@ -438,13 +438,13 @@ $(function () {
 
                 // TODO: Extend this code block to app.js
                 if (data.message.terminal) {
-                    if (data.message.terminal.startsWith("<!--CUSTOM-->")) {
-                        //if (spinnerObj) spinnerObj.spinner();
-
-                        const openedWindow = window.open();
-                        openedWindow.document.body.innerHTML = data.message.terminal;
-                        openedWindow.onafterprint = openedWindow.close;
-                        openedWindow.print();
+                    if (data.message.terminal.startsWith("<link")) {
+                        if (spinnerObj) spinnerObj.spinner();
+                        var printContents = data.message.terminal;
+                        var originalContents = document.body.innerHTML;
+                        document.body.innerHTML = printContents;
+                        window.print();
+                        document.body.innerHTML = originalContents;
                     }
                     else
                         window.location.href = data.message.terminal;
