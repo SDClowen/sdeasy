@@ -47,6 +47,11 @@ $(function () {
 
     document.head.appendChild(style)
 
+    window.addEventListener("popstate", function () {
+        const p = this.window.location.pathname
+        $("[data-url='"+p+"'], [href='"+p+"'][live='true']").trigger("click")
+    });
+
     /**
      * Show active class on the linked tag after which page is viewed
      */
@@ -578,7 +583,7 @@ $(function () {
 
 
                 var dataContent = $this.data("content");
-                if(!dataContent)
+                if (!dataContent)
                     dataContent = "#content";
 
                 $(dataContent).html(data.content);
@@ -724,7 +729,7 @@ $(function () {
             target.data("select-name", private.message.selectName)
             target.data("select", private.message.selectData)
             target.data("action", private.message.action)
-            
+
             const splited = private.message.selectName.split(',');
             splited.forEach(p => {
                 const splitedJson = private.message.selectData[p]
@@ -799,7 +804,7 @@ $(function () {
                             const selectNames = target.data("select-name");
                             if (selectNames && selectNames.includes(name)) {
                                 const selectData = JSON.parse(target.attr(`data-select-${name}`))
-                                
+
                                 if (selectData) {
                                     item.html("");
 
