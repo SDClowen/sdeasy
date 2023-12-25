@@ -618,6 +618,7 @@ $(function () {
             const $this = $(this);
             const method = event.currentTarget.method;
             const action = event.currentTarget.action;
+            const contentType = $this.data("type");
 
             const beforeFunc = $this.attr("before")
             if (beforeFunc)
@@ -641,7 +642,7 @@ $(function () {
                 if (afterFunc)
                     eval(afterFunc);
 
-            }, action, new FormData(this)/*$(this).serialize()*/, method);
+            }, action, new FormData(this)/*$(this).serialize()*/, method, contentType);
 
             return false;
         }
