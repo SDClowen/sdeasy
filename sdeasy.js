@@ -49,7 +49,7 @@ $(function () {
 
     window.addEventListener("popstate", function () {
         const p = this.window.location.pathname
-        $("[data-url='"+p+"'], [href='"+p+"'][live='true']").trigger("click")
+        $("[data-url='" + p + "'], [href='" + p + "'][live='true']").trigger("click")
     });
 
     /**
@@ -133,7 +133,7 @@ $(function () {
      * Go to the specified element in an animated way
      * @param {*} main Is the main element from which the animation will start.
      */
-    $.fn.scroll = function (main = 'html, body') {
+    $.fn.sdscroll = function (main = 'html, body') {
         var position = this.offset().top;
         $(main).animate({
             scrollTop: position
@@ -384,7 +384,7 @@ $(function () {
                     $(data.message).appendTo(insertTo).fadeIn("slow");
             }
             else if (content.length && xhrDataType == "html") {
-                content.scroll();
+                content.sdscroll();
                 content.html(data);
             }
             else if (content.length && data.message) {
@@ -392,7 +392,7 @@ $(function () {
                     content.html(data.message);
                 else {
                     content.message(data);
-                    content.scroll(content.parent());
+                    content.sdscroll(content.parent());
                 }
             }
 
@@ -514,24 +514,6 @@ $(function () {
     }
 
     /**
-     * Operates according to the conditions specified on all elements with the {lazy-load} tag. lazy:run(); :=)
-     */
-    $("[lazy-load]").each(function () {
-
-        const $this = $(this);
-
-        let url = $this.attr("lazy-load");
-        let actionType = $this.data("type");
-
-        if (!actionType)
-            actionType = "get";
-
-        $this.sdajax($this, null, url, false, actionType);
-
-        //return false;
-    });
-
-    /**
      * Operates according to the conditions specified on all elements with the {data-url} tag. lazy:run(); :=)
      */
     $("body").on("click", "[href]", function () {
@@ -651,7 +633,7 @@ $(function () {
     /**
      * When the a tag is clicked on the charts, it updates with ajax. lazy:run(); :=)
      */
-    $('[sd-chart-ajax] a').click(function (event) {
+    $('[sd-chart-ajax] a').on("click", function (event) {
         if (event.isDefaultPrevented())
             return false;
 
@@ -933,7 +915,7 @@ $(function () {
         form.find("textarea").val("");
     })
 
-    $("body").on("click", "[submit]", "click", function (event) {
+    $("body").on("click", "[submit]", function (event) {
         let data = $($(this).attr("submit"));
         data.trigger('submit', { submitter: $(this) });
     });
@@ -951,13 +933,9 @@ $(function () {
         window.location = $(this).data("href");
     });
 
-    $("[data-toggle]").change(function () {
+    $("[data-toggle]").on("change", function () {
         var value = $(this).data("toggle");
         $(value).fadeToggle();
-    });
-
-    $("[data-trigger = 'true']").each(function () {
-        $(this).trigger('click');
     });
 
     $("[avatar-selector]").on("change", function () {
@@ -1021,24 +999,70 @@ $(function () {
 
     });
 
-    $("[select2]").each(function (element) {
-
-        const current = $(this);
-
-        current.initSelect2();
-    });
-
-    $("[datatable=true]").each(function () {
-
-        const current = $(this);
-
-        current.initDataTable();
-    });
-
     $(document).on('select2:open', () => {
         document.querySelector('.select2-search__field').focus();
     });
 
-    $("[current-datetime]").val(currentDateTime());
-    $("[current-date]").val(currentDate());
+    function init() {
+
+        // When page firstly load, apply the path name to sidebars
+        applyPathName();
+
+        /**
+         * Operates according to the conditions specified on all elements with the {lazy-load} tag. lazy:run(); :=)
+         */
+        $("[lazy-load]").each(function () {
+
+            const $this = $(this);
+
+            let url = $this.attr("lazy-load");
+            let actionType = $this.data("type");
+
+            if (!actionType)
+                actionType = "get";
+
+            $this.sdajax($this, null, url, false, actionType);
+
+            //return false;
+        });
+
+        $("[data-trigger = 'true']").each(function () {
+            $(this).trigger('click');
+        });
+
+        $("[select2]").each(function (element) {
+
+            const current = $(this);
+
+            current.initSelect2();
+        });
+
+        $("[datatable=true]").each(function () {
+
+            const current = $(this);
+
+            if (DataTable.isDataTable(current))
+                current.DataTable().destroy();
+
+            current.initDataTable();
+        });
+
+        $("[current-datetime]").each(function () {
+            $(this).val(currentDateTime());
+        });
+
+        $("[current-date]").each(function () {
+            $(this).val(currentDate());
+        });
+    }
+
+    init();
+
+    var storedhash = window.location.pathname;
+    window.setInterval(function () {
+        if (window.location.pathname != storedhash) {
+            storedhash = window.location.pathname;
+            init();
+        }
+    }, 100);
 });
