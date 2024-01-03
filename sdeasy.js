@@ -443,7 +443,7 @@ $(function () {
 
                 // TODO: Extend this code block to app.js
                 if (data.message.terminal) {
-                    if (data.message.terminal.startsWith("<CUSTOM")) {
+                    if (data.message.terminal.startsWith("<!--CUSTOM-->")) {
                         if (spinnerObj) spinnerObj.spinner();
                         var printContents = data.message.terminal;
                         var originalContents = document.body.innerHTML;
