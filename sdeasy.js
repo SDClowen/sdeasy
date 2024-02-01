@@ -166,6 +166,8 @@ $(function () {
             info: info,
             paging: paginate,
             language: i18nDTJson,
+            dom: 'Bfrtip',
+            bInfo: false,
         };
 
         if (current.attr("datatable-enable-exports")) {
@@ -173,36 +175,32 @@ $(function () {
             const getExportHeader = current.attr("export-header");
             const getExportFooter = current.attr("export-footer");
 
-            config.exports = {
-                buttons: [
-                    {
-                        extend: 'copy',
-                        messageTop: getExportHeader,
-                        messageBottom: getExportFooter,
-                    },
-                    'csv',
-                    {
-                        extend: 'excel',
-                        messageTop: getExportHeader,
-                        messageBottom: getExportFooter,
-                        exportOptions: {
-                            stripNewLines: false
-                        }
-                    },
-                    {
-                        extend: 'pdf',
-                        messageTop: getExportHeader,
-                        messageBottom: getExportFooter,
-                    },
-                    {
-                        extend: 'print',
-                        messageTop: getExportHeader,
-                        messageBottom: getExportFooter,
+            config.buttons = [
+                {
+                    extend: 'copy',
+                    messageTop: getExportHeader,
+                    messageBottom: getExportFooter,
+                },
+                'csv',
+                {
+                    extend: 'excel',
+                    messageTop: getExportHeader,
+                    messageBottom: getExportFooter,
+                    exportOptions: {
+                        stripNewLines: false
                     }
-                ],
-                dom: '<"top"p>Blrtip',
-                bInfo: false,
-            };
+                },
+                {
+                    extend: 'pdf',
+                    messageTop: getExportHeader,
+                    messageBottom: getExportFooter,
+                },
+                {
+                    extend: 'print',
+                    messageTop: getExportHeader,
+                    messageBottom: getExportFooter,
+                }
+            ]
         }
 
         if (current.attr("datatable-ajax")) {
@@ -617,7 +615,7 @@ $(function () {
             $this.sdajax(button, function (data) {
                 if (data.type == "success") {
                     //$this[0].reset();
-                    
+
                     $this.resetForm();
 
                     // todo reset tom-select
