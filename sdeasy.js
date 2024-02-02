@@ -166,15 +166,16 @@ $(function () {
             info: info,
             paging: paginate,
             language: i18nDTJson,
-            dom: 'Bfrtip',
-            bInfo: false,
         };
 
-        if (current.attr("datatable-enable-exports")) {
+        if (current.attr("datatable-enable-exports") == "true") {
 
             const getExportHeader = current.attr("export-header");
             const getExportFooter = current.attr("export-footer");
 
+            
+            config.dom = 'Bfrtip'
+            config.bInfo = false
             config.buttons = [
                 {
                     extend: 'copy',
