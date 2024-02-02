@@ -181,7 +181,6 @@ $(function () {
                     messageTop: getExportHeader,
                     messageBottom: getExportFooter,
                 },
-                'csv',
                 {
                     extend: 'excel',
                     messageTop: getExportHeader,
