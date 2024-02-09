@@ -173,7 +173,7 @@ $(function () {
             const getExportHeader = current.attr("export-header");
             const getExportFooter = current.attr("export-footer");
 
-            
+
             config.dom = 'Bfrtip'
             config.bInfo = false
             config.buttons = [
@@ -337,6 +337,131 @@ $(function () {
         });
     }
 
+    $.fn.autoFillFormElements = function (jsonObj, target) {
+
+        const form = $(this)
+
+        if(!target)
+            target = form
+
+        if (!jsonObj)
+            return;
+
+        for (const [name, value] of Object.entries(jsonObj)) {
+            let item = $('[name="' + name + '"]', form);
+            if (!item.length)
+                continue;
+
+            if (item.is("select")) {
+                const selectNames = target.data("select-name");
+                if (selectNames && selectNames.includes(name)) {
+                    const selectData = JSON.parse(target.attr(`data-select-${name}`))
+
+                    if (selectData) {
+                        item.html("");
+
+                        for (const [sKey, sVal] of Object.entries(selectData)) {
+
+                            const v = Object.values(sVal);
+                            item.append(`<option value="${v[0]}">${v[1]}</option>`);
+                        }
+                    }
+                }
+
+                var index = item.find('[value="' + value + '"]');
+                index.prop('selected', true);
+
+                item.trigger("change");
+
+                try {
+                    item[0].tomselect.sync();
+                } catch (error) {
+
+                }
+            }
+            else if (item.is("input")) {
+                var type = item.attr('type');
+
+                switch (type) {
+                    case 'checkbox':
+                        item.attr('checked', value > 0);
+                        break;
+                    case 'radio':
+                        item.each((element, elementValue) => {
+
+                            if (elementValue.value == value) {
+                                elementValue.checked = true;
+                                $(elementValue).parent().tab('show');
+                            }
+
+                        });
+                        break;
+                    case 'file':
+                        break;
+                    default:
+                        item.val(value);
+                        break;
+                }
+
+                item.trigger("change");
+            }
+            else if (item.attr("tinymce")) {
+                var editor = tinymce.get(name);
+                if (editor != null) {
+                    editor.setContent(value);
+                    tinymce.triggerSave();
+                }
+            }
+            else if (item.is("textarea")) {
+                item.val(value);
+                item.trigger("change");
+            }
+            else if (item.attr("selectize")) {
+                item.selectize()[0].selectize.setValue(value);
+            }
+            else if (item.attr("select2")) {
+                item.val(value).trigger("change");
+            }
+        }
+    };
+
+    $.fn.fillModalLazyData = function (jsonObj, target) {
+        const form = $(this)
+
+        const lazyData = form.find("[modal-lazy-data]");
+        if (lazyData.length) {
+            const totalLength = lazyData.length;
+
+            let ajaxs = [];
+
+            lazyData.each(function () {
+                const $this = $(this);
+
+                if (target.data("select-name") == $this.attr("name") &&
+                    target.attr("modal-lazy-data")) {
+                    $this.attr("modal-lazy-data", target.attr("modal-lazy-data"));
+                }
+
+                const lazyUrl = $this.attr("modal-lazy-data");
+                ajaxs.push($.ajax({
+                    url: lazyUrl,
+                    type: "GET",
+                    dataType: "html",
+                    success: function (ajaxResult) {
+                        $this.html(ajaxResult);
+                    }
+                }));
+            });
+
+            $.when.apply(this, ajaxs).done(function () {
+                console.log("All ajax done!");
+                form.autoFillFormElements(jsonObj, target);
+            });
+        }
+        else
+            form.autoFillFormElements(jsonObj, target);
+    }
+
     $.fn.sdajax = function (spinnerObj, onAjaxDone, xhrUrl, xhrData = false, xhrType = "get", xhrDataType = "json") {
 
         if (spinnerObj)
@@ -451,6 +576,11 @@ $(function () {
                     }
                     else
                         window.location.href = data.message.terminal;
+                }
+
+                const autoFill = $this.data("auto-fill");
+                if (autoFill) {
+                    $(autoFill).autoFillFormElements(data.message);
                 }
 
                 if (autoUpdate) {
@@ -773,125 +903,6 @@ $(function () {
 
             form.attr("action", action);
 
-            let jsonObj = target.data("json");
-
-            const fn = function () {
-
-                if (jsonObj) {
-                    for (const [name, value] of Object.entries(jsonObj)) {
-                        let item = $('[name="' + name + '"]', form);
-                        if (!item.length)
-                            continue;
-
-                        if (item.is("select")) {
-                            const selectNames = target.data("select-name");
-                            if (selectNames && selectNames.includes(name)) {
-                                const selectData = JSON.parse(target.attr(`data-select-${name}`))
-
-                                if (selectData) {
-                                    item.html("");
-
-                                    for (const [sKey, sVal] of Object.entries(selectData)) {
-
-                                        const v = Object.values(sVal);
-                                        item.append(`<option value="${v[0]}">${v[1]}</option>`);
-                                    }
-                                }
-                            }
-
-                            var index = item.find('[value="' + value + '"]');
-                            index.prop('selected', true);
-
-                            item.trigger("change");
-
-                            try {
-                                item[0].tomselect.sync();
-                            } catch (error) {
-
-                            }
-                        }
-                        else if (item.is("input")) {
-                            var type = item.attr('type');
-
-                            switch (type) {
-                                case 'checkbox':
-                                    item.attr('checked', value > 0);
-                                    break;
-                                case 'radio':
-                                    item.each((element, elementValue) => {
-
-                                        if (elementValue.value == value) {
-                                            elementValue.checked = true;
-                                            $(elementValue).parent().tab('show');
-                                        }
-
-                                    });
-                                    break;
-                                case 'file':
-                                    break;
-                                default:
-                                    item.val(value);
-                                    break;
-                            }
-
-                            item.trigger("change");
-                        }
-                        else if (item.attr("tinymce")) {
-                            var editor = tinymce.get(name);
-                            if (editor != null) {
-                                editor.setContent(value);
-                                tinymce.triggerSave();
-                            }
-                        }
-                        else if (item.is("textarea")) {
-                            item.val(value);
-                            item.trigger("change");
-                        }
-                        else if (item.attr("selectize")) {
-                            item.selectize()[0].selectize.setValue(value);
-                        }
-                        else if (item.attr("select2")) {
-                            item.val(value).trigger("change");
-                        }
-                    }
-                }
-            };
-
-            const step2 = function () {
-                const lazyData = form.find("[modal-lazy-data]");
-                if (lazyData.length) {
-                    const totalLength = lazyData.length;
-
-                    let ajaxs = [];
-
-                    lazyData.each(function () {
-                        const $this = $(this);
-
-                        if (target.data("select-name") == $this.attr("name") &&
-                            target.attr("modal-lazy-data")) {
-                            $this.attr("modal-lazy-data", target.attr("modal-lazy-data"));
-                        }
-
-                        const lazyUrl = $this.attr("modal-lazy-data");
-                        ajaxs.push($.ajax({
-                            url: lazyUrl,
-                            type: "GET",
-                            dataType: "html",
-                            success: function (ajaxResult) {
-                                $this.html(ajaxResult);
-                            }
-                        }));
-                    });
-
-                    $.when.apply(this, ajaxs).done(function () {
-                        console.log("All ajax done!");
-                        fn();
-                    });
-                }
-                else
-                    fn();
-            };
-
             let getJson = target.data("get-json");
             if (getJson) {
                 $.ajax({
@@ -899,13 +910,13 @@ $(function () {
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
-                        jsonObj = data;
-                        step2();
+                        form.fillModalLazyData(data, target);
                     }
                 });
             }
-            else
-                step2();
+            else {
+                form.fillModalLazyData(target.data("json"), target)
+            }
         }
     })
 
