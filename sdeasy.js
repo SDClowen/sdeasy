@@ -744,11 +744,9 @@ $(function () {
 
             $this.sdajax(button, function (data) {
                 if (data.type == "success") {
-                    //$this[0].reset();
-
-                    $this.resetForm();
-
-                    // todo reset tom-select
+                    const blockReseting = $this.data("block-reset")
+                    if(!blockReseting)
+                        $this.resetForm();
                 }
 
                 if (afterFunc)
