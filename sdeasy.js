@@ -174,7 +174,7 @@ $(function () {
             const getExportFooter = current.attr("export-footer");
 
 
-            config.dom = 'Bfrtip'
+            config.dom = 'Blfrtip'
             config.bInfo = false
             config.buttons = [
                 {
