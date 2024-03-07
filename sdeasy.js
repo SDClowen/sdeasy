@@ -341,7 +341,7 @@ $(function () {
 
         const form = $(this)
 
-        if(!target)
+        if (!target)
             target = form
 
         if (!jsonObj)
@@ -745,7 +745,7 @@ $(function () {
             $this.sdajax(button, function (data) {
                 if (data.type == "success") {
                     const blockReseting = $this.data("block-reset")
-                    if(!blockReseting)
+                    if (!blockReseting)
                         $this.resetForm();
                 }
 
@@ -862,6 +862,27 @@ $(function () {
 
         if (title)
             titleContent.html(title);
+
+
+        const dataTableNames = target.attr("datatable-names");
+        const dataTableUrls = target.attr("datatable-actions")
+
+        if (dataTableNames && dataTableUrls) {
+            const splitted = dataTableNames.split(',');
+            const splittedUrls = dataTableUrls.split(',');
+
+            splitted.forEach((dataTableName, i) => {
+
+                const dataTableDom = $(dataTableName);
+
+                dataTableDom.attr("datatable-ajax", splittedUrls[i])
+
+                if (DataTable.isDataTable(dataTableName))
+                    dataTableDom.DataTable().destroy();
+
+                dataTableDom.initDataTable();
+            })
+        }
 
         const action = target.data("action");
         if (action) {
