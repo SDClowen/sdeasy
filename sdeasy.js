@@ -219,6 +219,49 @@ $(function () {
             };
         }
 
+        if (current.attr("datatable-targets")) {
+            var columns = current.attr("datatable-targets").split(',');
+            if (columns.length > 0) {
+                let columnsDefs = []
+                columns.forEach(p, i => {
+                    var splitData = p.split(':')
+
+                    var targetIndex = splitData[0]
+                    var targetType = splitData[1]
+                    columnsDefs.push({ 'targets': targetIndex, 'type': targetType })
+                })
+            }
+        }
+
+        if (current.attr("datatable-sum-columns")) {
+            var columns = current.attr("datatable-sum-columns").split(',');
+            config.footerCallback = function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+                // converting to interger to find total
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+                $(api.column(0).footer()).html('Toplam');
+
+                columns.forEach(index => {
+                    const total = api
+                        .column(index)
+                        .data()
+                        .reduce(function (a, b) {
+                            return (intVal(a) + intVal(b)).toFixed(1);
+                        }, 0);
+
+                    $(api.column(index).footer()).html(total);
+                })
+            }
+
+        }
+
         current.DataTable(config);
     }
 
