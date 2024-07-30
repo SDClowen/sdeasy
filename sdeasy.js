@@ -47,9 +47,20 @@ $(function () {
 
     document.head.appendChild(style)
 
-    window.addEventListener("popstate", function () {
+    window.addEventListener("popstate", function (e) {
         const p = this.window.location.pathname
-        $("[data-url='" + p + "'], [href='" + p + "'][live='true']").trigger("click")
+        //this.window.location.href = p
+        const lives = $("[data-url='" + p + "'], [href='" + p + "'][live='true']");
+        if(!lives.length)
+        {
+            const dummyElement = $("<a style='display:none' live='true' href='"+p+"'></a>");
+            $("body").append(dummyElement)
+            dummyElement.trigger("click")
+            dummyElement.remove()
+        }
+        else
+            lives.trigger("click")
+        
     });
 
     /**
