@@ -51,16 +51,15 @@ $(function () {
         const p = this.window.location.pathname
         //this.window.location.href = p
         const lives = $("[data-url='" + p + "'], [href='" + p + "'][live='true']");
-        if(!lives.length)
-        {
-            const dummyElement = $("<a style='display:none' live='true' href='"+p+"'></a>");
+        if (!lives.length) {
+            const dummyElement = $("<a style='display:none' live='true' href='" + p + "'></a>");
             $("body").append(dummyElement)
             dummyElement.trigger("click")
             dummyElement.remove()
         }
         else
             lives.trigger("click")
-        
+
     });
 
     /**
@@ -542,6 +541,32 @@ $(function () {
             redirect = redirect.split(":");
 
         let settings = {};
+        settings.xhr = function () {
+            var xhr = new window.XMLHttpRequest();
+
+            xhr.upload.addEventListener("progress", function (evt) {
+                if(!$this[0].hasAttribute("file-upload"))
+                    return;
+
+                if (evt.lengthComputable) {
+                    var percentComplete = evt.loaded / evt.total;
+                    percentComplete = parseInt(percentComplete * 100);
+
+                    $this.find("#upload-result").fadeIn();
+                    $this.find("[data-upload-value]").text(percentComplete + "%");
+                    $this.find("[data-upload-style-value]").css({
+                        width: percentComplete + "%"
+                    });
+
+                    if (percentComplete === 100) {
+                        $this.find("#upload-result").fadeOut();
+                    }
+
+                }
+            }, false);
+
+            return xhr;
+        }
         settings.async = true;
         settings.type = xhrType;
         settings.url = xhrUrl;
