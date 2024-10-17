@@ -536,6 +536,9 @@ $(function () {
         const insertTo = $this.data("insert-to");
         const insertType = $this.data("insert-type");
         const modalDispose = $this.data("dispose-modal");
+        let autoScroll = $this.data("scroll");
+        if (autoScroll == undefined)
+            autoScroll = true;
 
         if (redirect)
             redirect = redirect.split(":");
@@ -545,7 +548,7 @@ $(function () {
             var xhr = new window.XMLHttpRequest();
 
             xhr.upload.addEventListener("progress", function (evt) {
-                if(!$this[0].hasAttribute("file-upload"))
+                if (!$this[0].hasAttribute("file-upload"))
                     return;
 
                 if (evt.lengthComputable) {
@@ -586,7 +589,9 @@ $(function () {
                     $(data.message).appendTo(insertTo).fadeIn("slow");
             }
             else if (content.length && xhrDataType == "html") {
-                content.sdscroll();
+                if (autoScroll)
+                    content.sdscroll();
+
                 content.html(data);
             }
             else if (content.length && data.message) {
@@ -594,7 +599,9 @@ $(function () {
                     content.html(data.message);
                 else {
                     content.message(data);
-                    content.sdscroll(content.parent());
+
+                    if (autoScroll)
+                        content.sdscroll(content.parent());
                 }
             }
 
@@ -1125,12 +1132,16 @@ $(function () {
             const $this = $(this);
 
             let url = $this.attr("lazy-load");
-            let actionType = $this.data("type");
+            let actionType = $this.data("action-type");
+            let type = $this.data("type");
+
+            if (!type)
+                actionType = "json";
 
             if (!actionType)
                 actionType = "get";
 
-            $this.sdajax($this, null, url, false, actionType);
+            $this.sdajax($this, null, url, false, actionType, type);
 
             //return false;
         });
