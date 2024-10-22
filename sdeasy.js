@@ -150,6 +150,14 @@ $(function () {
         }, 500, 'linear');
     }
 
+    const parseRedirect = (redirectUrl) => {
+      const index = redirectUrl.lastIndexOf(":")
+      return {
+        url: redirectUrl.substring(index - 1, index - redirectUrl.length),
+        ms: redirectUrl.substring(index + 1, redirectUrl.length)
+      }
+    }
+
     $.fn.initDataTable = function (dtData = null, outResult = null) {
 
         const current = $(this);
@@ -540,9 +548,6 @@ $(function () {
         if (autoScroll == undefined)
             autoScroll = true;
 
-        if (redirect)
-            redirect = redirect.split(":");
-
         let settings = {};
         settings.xhr = function () {
             var xhr = new window.XMLHttpRequest();
@@ -708,7 +713,10 @@ $(function () {
                     eval(injectCode);
 
                 if (redirect)
-                    setTimeout(function () { window.location.href = redirect[0]; }, redirect[1]);
+                {
+                    redirect = parseRedirect(redirect)
+                    setTimeout(function () { window.location.href = redirect.url; }, redirect.ms);
+                }
             }
 
             onAjaxDone?.(data);
@@ -717,8 +725,10 @@ $(function () {
                 location.reload();
 
             if (data.redirect) {
-                redirect = data.redirect.split(":");
-                setTimeout(function () { window.location.href = redirect[0]; }, redirect[1]);
+
+                redirect = parseRedirect(data.redirect)
+                
+                setTimeout(function () { window.location.href = redirect.url }, redirect.ms);
             }
         };
 
@@ -801,8 +811,7 @@ $(function () {
 
         }, url, false, actionType, actionDataType);
 
-        if($this.attr("block-return") == undefined)
-            return false;
+        return false;
     });
 
     /**
