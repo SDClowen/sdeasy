@@ -150,13 +150,20 @@ $(function () {
         }, 500, 'linear');
     }
 
-    const parseRedirect = (redirectUrl) => {
-      const index = redirectUrl.lastIndexOf(":")
-      return {
-        url: redirectUrl.substring(index - 1, index - redirectUrl.length),
-        ms: redirectUrl.substring(index + 1, redirectUrl.length)
-      }
-    }
+    const parseRedirect = redirectUrl => {
+        let index = redirectUrl.lastIndexOf(':');
+        if (index === -1 || (redirectUrl.indexOf('://') > -1 && index <= redirectUrl.indexOf('://') + 2)) {
+            return {
+                url: redirectUrl,
+                ms: 0
+            };
+        }
+
+        return {
+            url: redirectUrl.substring(0, index),
+            ms: parseInt(redirectUrl.substring(index + 1)) || 0
+        };
+    };
 
     $.fn.initDataTable = function (dtData = null, outResult = null) {
 
@@ -712,8 +719,7 @@ $(function () {
                 if (injectCode)
                     eval(injectCode);
 
-                if (redirect)
-                {
+                if (redirect) {
                     redirect = parseRedirect(redirect)
                     setTimeout(function () { window.location.href = redirect.url; }, redirect.ms);
                 }
@@ -727,7 +733,7 @@ $(function () {
             if (data.redirect) {
 
                 redirect = parseRedirect(data.redirect)
-                
+
                 setTimeout(function () { window.location.href = redirect.url }, redirect.ms);
             }
         };
