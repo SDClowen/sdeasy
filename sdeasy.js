@@ -817,7 +817,8 @@ $(function () {
 
         }, url, false, actionType, actionDataType);
 
-        return false;
+        if($this.attr("block-return") === undefined)
+            return false;
     });
 
     /**
