@@ -78,7 +78,7 @@ $(function () {
 
             if (pathElement) {
                 pathElement.classList.add("active")
-                pathElement.attributes["href"] = "#";
+                //pathElement.attributes["href"] = "#";
 
                 if (pathElement.hasAttribute("onclick"))
                     pathElement.removeAttribute("onclick");
